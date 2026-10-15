@@ -177,7 +177,7 @@ function showLogin(note) {
       .then(function (x) {
         if (x.r.ok && x.j.ok) { role = x.j.role; email = x.j.email; showShell(); return; }
         btn.disabled = false;
-        put(err, x.j.error === "salah" ? "Email atau password salah." :
+        put(err, x.j.error === "salah" ? "Email atau password salah." + (x.j.detail ? " [" + x.j.detail + "]" : "") :
           x.j.error === "bukan_anggota" ? "Akun ini belum didaftarkan sebagai anggota dashboard." :
           x.j.error === "config" ? "Server belum dikonfigurasi (cek environment variable di Vercel)." : "Gagal masuk. Coba lagi.");
       })
