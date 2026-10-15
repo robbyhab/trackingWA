@@ -45,7 +45,12 @@ async function handler(req, res) {
 
   try {
     const r = await sb.signIn(email, password);
-    if (!r.ok || !r.body || !r.body.access_token) return res.status(401).json({ ok: false, error: "salah" });
+    if (!r.ok || !r.body || !r.body.access_token) {
+      const b = r.body || {};
+      const detail = String(b.error_code || b.msg || b.message || b.error_description || b.error || ("http_" + r.status)).slice(0, 80);
+      console.error("auth: supabase menolak login", r.status, detail);
+      return res.status(401).json({ ok: false, error: "salah", detail });
+    }
     sb.setSession(res, r.body);
     // Pastikan akun ini memang terdaftar sebagai anggota tenant.
     const s = await sb.session({ headers: { cookie: "sb_at=" + encodeURIComponent(r.body.access_token) } }, res);
